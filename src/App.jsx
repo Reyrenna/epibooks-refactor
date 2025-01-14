@@ -3,8 +3,11 @@ import './App.css'
 import MyNav from './components/MyNav'
 import MyFooter from './components/MyFooter'
 import Welcome from './components/Welcome'
-import BodyDelSito from './components/Body'
+// import AllTheBooks from './components/AllTheBooks'
 import { Container } from 'react-bootstrap'
+import BookList from './components/BookList'
+
+import fantasy from './data/fantasy.json'
 
 function App() {
   return (
@@ -12,7 +15,8 @@ function App() {
       <MyNav />
       <Container>
         <Welcome />
-       <BodyDelSito />
+        {/* <AllTheBooks /> */}
+        <BookList books={fantasy} />
       </Container>
       <MyFooter />
     </>
