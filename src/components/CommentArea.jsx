@@ -1,85 +1,56 @@
-import { Component } from 'react'
+import { useEffect, useState } from 'react'
 import CommentList from './CommentList'
 import AddComment from './AddComment'
 import Loading from './Loading'
 import Error from './Error'
 
-class CommentArea extends Component {
-  state = {
-    comments: [],
-    isLoading: false,
-    isError: false,
-  }
+const CommentArea = ({ asin }) => {
+  const [comments, setComments] = useState([])
+  const [isLoading, setIsLoading] = useState(false)
+  const [isError, setIsError] = useState(false)
 
-  // componentDidMount = async () => {
-  //   try {
-  //     let response = await fetch(
-  //       'https://striveschool-api.herokuapp.com/api/comments/' +
-  //         this.props.asin,
-  //       {
-  //         headers: {
-  //           Authorization:
-  //             'Bearer inserisci-qui-il-tuo-token',
-  //         },
-  //       }
-  //     )
-  //     console.log(response)
-  //     if (response.ok) {
-  //       let comments = await response.json()
-  //       this.setState({ comments: comments, isLoading: false, isError: false })
-  //     } else {
-  //       console.log('error')
-  //       this.setState({ isLoading: false, isError: true })
-  //     }
-  //   } catch (error) {
-  //     console.log(error)
-  //     this.setState({ isLoading: false, isError: true })
-  //   }
-  // }
-
-  componentDidUpdate = async (prevProps) => {
-    if (prevProps.asin !== this.props.asin) {
-      this.setState({
-        isLoading: true,
-      })
+  useEffect(() => {
+    const getComments = async () => {
+      setIsLoading(true)
       try {
         let response = await fetch(
-          'https://striveschool-api.herokuapp.com/api/comments/' +
-            this.props.asin,
+          'https://striveschool-api.herokuapp.com/api/comments/' + asin,
           {
             headers: {
-              Authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2Nzg2NmMyYjBmZTRlMjAwMTU2Njg3ZWYiLCJpYXQiOjE3MzY4NjI3NjMsImV4cCI6MTczODA3MjM2M30.0nrf3mv6TsYruexDPsMlR6q9tq2wro4Jc2DHLiTM2YU',
+              Authorization: 'Bearer inserisci-qui-il-tuo-token',
             },
           }
         )
         console.log(response)
         if (response.ok) {
           let comments = await response.json()
-          this.setState({
-            comments: comments,
-            isLoading: false,
-            isError: false,
-          })
+          setComments(comments)
+          setIsLoading(false)
+          setIsError(false)
         } else {
-          this.setState({ isLoading: false, isError: true })
+          console.log('error')
+          setIsLoading(false)
+          setIsError(true)
         }
       } catch (error) {
         console.log(error)
-        this.setState({ isLoading: false, isError: true })
+        setIsLoading(false)
+        setIsError(true)
       }
     }
-  }
+    if (asin) {
+      getComments()
+    }
+  }, [asin])
 
-  render() {
-    return (
-      <div className="text-center">
-        {this.state.isLoading && <Loading />}
-        {this.state.isError && <Error />}
-        <AddComment asin={this.props.asin} />
-        <CommentList commentsToShow={this.state.comments} />
-      </div>
-    )
-  }
+  return (
+    <div className="text-center">
+      {isLoading && <Loading />}
+      {isError && <Error />}
+      <AddComment asin={asin} />
+      <CommentList commentsToShow={comments} />
+    </div>
+  )
 }
 
 export default CommentArea
